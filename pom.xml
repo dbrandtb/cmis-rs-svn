@@ -1,0 +1,107 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.biosnettcs</groupId>
+	<artifactId>cmis-rs</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<name>cmis-rs</name>
+	<url>http://maven.apache.org</url>
+
+	<dependencies>
+
+		<!-- Para REST -->
+		<dependency>
+			<groupId>asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>3.3.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-bundle</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-core</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20140107</version>
+		</dependency>
+        
+        
+		<!-- Apache Chemistry para CMIS -->
+		<dependency>
+			<groupId>org.apache.chemistry.opencmis</groupId>
+			<artifactId>chemistry-opencmis-client-impl</artifactId>
+			<version>0.13.0</version>
+		</dependency>
+        
+        
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.12</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<finalName>cmis-rs</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.3.2</version>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+					<executions>
+						<execution>
+							<id>default-testCompile</id>
+							<phase>test-compile</phase>
+							<goals>
+								<goal>testCompile</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>default-compile</id>
+							<phase>compile</phase>
+							<goals>
+								<goal>compile</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jersey.version>1.19</jersey.version>
+	</properties>
+
+</project>

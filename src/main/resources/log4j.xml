@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    
+    <!-- Developer Appender (Ver todo) -->
+    <appender name="dev" class="org.apache.log4j.RollingFileAppender">
+        <param name="Threshold" value="DEBUG" />
+        <param name="File" value="/RES/logs/cmis-rs/dev.log" />
+        <param name="Append" value="true" />
+        <param name="MaxFileSize" value="10MB"/>
+        <param name="MaxBackupIndex" value="10"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} [%X{USERID}] %-5p %-18C{1} - %m%n" />
+        </layout>
+    </appender>
+    
+    <!-- Console Appender -->
+    <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+        <param name="Threshold" value="DEBUG" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} [%X{USERID}] %-5p %-18C{1} - %m%n" />
+        </layout>
+    </appender>
+
+    <logger name="com.biosnettcs">
+        <level value="DEBUG" />
+        <appender-ref ref="dev" />
+        <appender-ref ref="stdout" />
+    </logger>
+    
+    <root> 
+        <priority value="DEBUG" />
+    </root>
+    
+</log4j:configuration>
