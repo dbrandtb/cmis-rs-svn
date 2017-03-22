@@ -1,4 +1,4 @@
-package com.biosnettcs.utilities;
+package com.biosnettcs.util;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package com.biosnettcs.utilities;
+package com.biosnettcs.util;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
