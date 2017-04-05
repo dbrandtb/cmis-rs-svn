@@ -42,9 +42,7 @@ public class CMISRESTService {
     Logger logger = LoggerFactory.getLogger(CMISRESTService.class);
     
     public static final String URL_CMIS_SERVICE = "http://192.253.245.126:9080/openfncmis/atom";
-
-    public static final String DEFAULT_PATH = Constantes.PATH_SEPARATOR + "Cases" + 
-            Constantes.PATH_SEPARATOR + "UW" + Constantes.PATH_SEPARATOR;
+    //public static final String URL_CMIS_SERVICE = "http://localhost:8080/chemistry-opencmis-server-inmemory-1.0.0/atom11";
     
     
 	@POST
@@ -145,13 +143,9 @@ public class CMISRESTService {
             // contentType:
             String contentType = MimeTypes.getMIMEType(new File(fullFileName));
             
-            // Create folder:
-            paso = new StringBuilder("creando ruta ").append(String.valueOf(documentClass)).toString();
-            Folder parent = null;
-            parent = createFolder(session, DEFAULT_PATH, folder, "cmis:folder");
-            paso = new StringBuilder("creando ruta ").append(String.valueOf(documentClass)).toString();
-            parent = createFolder(session, DEFAULT_PATH + folder + Constantes.PATH_SEPARATOR,
-                    String.valueOf(documentClass), "cmis:folder");
+            // Create folder structure:
+            paso = new StringBuilder("creando ruta ").append(String.valueOf(folder)).toString();
+            Folder parent = createPath(session, folder);
 
             // Create a ContentStream object from file:
             // Init array with file length:
@@ -210,6 +204,92 @@ public class CMISRESTService {
             logger.info("ruta{}", ruta);
             parent = ((Folder)session.getObjectByPath(folderRoot)).createFolder(folderProps);
             logger.info("Carpeta {} con ruta {} fue creada", folderName, parent.getPath());
+        }
+        return parent;
+    }
+    
+    
+    @GET
+    @Path("/carpetas/json")
+    @Produces("application/json; charset=utf8")
+    public Response createPath(
+            @QueryParam("repositoryId")  String repositoryId,
+            @QueryParam("rutaCompleta")  String rutaCompleta) {
+        
+      logger.info("Entrando a createPath...");
+        int status  = 404;
+        RespuestaVO respuesta = new RespuestaVO();
+        String paso = "recuperando par\u00E1metros iniciales";
+        try {
+            //TODO:agregar en archivo de propiedades:
+            //String url = JerseyConfig.properties.getProperty("service.cmis.atom.url");
+            logger.info("URL de servidor CMIS= {}", URL_CMIS_SERVICE);
+            logger.debug("repositoryId={}, rutaCompleta={}", repositoryId, rutaCompleta);
+            
+            Map<String, String> parameters = initParameters(URL_CMIS_SERVICE, repositoryId, null);
+            
+            paso = "creando sesi\u00F3n de CMIS";
+            // Default factory implementation
+            SessionFactory factory = SessionFactoryImpl.newInstance();
+            // Create session
+            Session session = factory.createSession(parameters);
+            
+            paso = "creando carpetas";
+
+            Folder folder = createPath(session, rutaCompleta);
+            
+            status = 200;
+            respuesta.setValue(folder.getPath());
+
+        } catch (Exception e) {
+            logger.error("Error {}: ", paso, e);
+            respuesta = new RespuestaVO("Error " + paso + ": " + e.toString());
+        }
+        logger.info("Fin de createDocumentCMIS");
+        return Response.status(status).entity(respuesta).build();
+    }
+    
+    /**
+     * Crea la ruta completa en el servidor CMIS
+     * @param session      Referencia a la sesion CMIS
+     * @param rutaCompleta Ruta completa a crear
+     * @return
+     * @throws Exception
+     */
+    private Folder createPath(Session session, String rutaCompleta) throws Exception {
+        
+        String [] subrutas = rutaCompleta.split(Constantes.PATH_SEPARATOR);
+        
+        String ruta = Constantes.PATH_SEPARATOR;
+        Folder parent = null;
+        String nuevaRuta = "";
+        for (int i = 0; i < subrutas.length; i++) {
+            if(subrutas[i] != null && subrutas[i].trim().length() > 0) {
+                try {
+                    if(Constantes.PATH_SEPARATOR.equals(ruta)) {
+                        nuevaRuta = ruta+subrutas[i];
+                    } else {
+                        nuevaRuta = ruta+Constantes.PATH_SEPARATOR+subrutas[i];
+                    }
+                    logger.debug("Se va a intentar recuperar la carpeta {}", nuevaRuta);
+                    parent = (Folder)session.getObjectByPath(nuevaRuta);
+                    logger.info("La carpeta {} con ruta {} ya existe", subrutas[i], parent.getPath());
+                } catch (CmisObjectNotFoundException onf) {
+                    logger.debug("La carpeta {} con ruta {} no existe, se intentará crear...", subrutas[i], nuevaRuta);
+                    // Create the folder:
+                    Map<String, Object> folderProps = new HashMap<String, Object>();
+                    folderProps.put(PropertyIds.NAME, subrutas[i]);
+                    folderProps.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
+                    parent = ((Folder)session.getObjectByPath(ruta)).createFolder(folderProps);
+                    logger.info("Carpeta {} con ruta {} fue creada", subrutas[i], parent.getPath());
+                }
+                if(Constantes.PATH_SEPARATOR.equals(ruta)) {
+                    ruta += subrutas[i];
+                } else {
+                    ruta += Constantes.PATH_SEPARATOR + subrutas[i];
+                }
+                logger.info("ruta nueva={}", ruta);
+            }
         }
         return parent;
     }
