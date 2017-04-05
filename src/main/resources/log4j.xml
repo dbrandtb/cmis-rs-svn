@@ -15,18 +15,10 @@
         </layout>
     </appender>
     
-    <!-- Console Appender -->
-    <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
-        <param name="Threshold" value="DEBUG" />
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} [%X{USERID}] %-5p %-18C{1} - %m%n" />
-        </layout>
-    </appender>
-
+    
     <logger name="com.biosnettcs">
         <level value="DEBUG" />
         <appender-ref ref="dev" />
-        <appender-ref ref="stdout" />
     </logger>
     
     <root> 
